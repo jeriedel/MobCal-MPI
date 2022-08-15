@@ -4,6 +4,7 @@ import re
 import subprocess
 import time
 from shutil import copyfile
+from pathlib import Path
 from mfj_creator.Python.xyz_to_mfj import *
 
 def run(directory,csv,sdf2xyz2sdf_Directory,charge,parameters):
@@ -32,7 +33,7 @@ def run(directory,csv,sdf2xyz2sdf_Directory,charge,parameters):
 	directory = directory+'Mobcal_Inputs'
 
 	App_Data = os.listdir(os.getenv('APPDATA'))
-	Babel_Installed = [x for x in App_Data if x == 'OpenBabel-2.4.1']
+	Babel_Installed = [x for x in App_Data if x == 'OpenBabel-3.1.1']
 	if not Babel_Installed:
 		print('Open Babel could not be found on your pc, are you running the version provided?')
 		sys.exit()
@@ -52,6 +53,7 @@ def run(directory,csv,sdf2xyz2sdf_Directory,charge,parameters):
 	##### -- ESP Data -- #####
 	ESP = []
 	logs = [x for x in os.listdir(directory) if x.lower().endswith('.log')]
+
 	print('Extracting ESP info from logs.\n')
 	for file in logs:
 		opf = open(directory+file,'r')
@@ -70,16 +72,24 @@ def run(directory,csv,sdf2xyz2sdf_Directory,charge,parameters):
 
 	##### -- Babel -- #####
 	print('Converting logs to sdf.\n')
-	babel_i = directory+'*.log'
-	babel_o = directory+'*.sdf'
 
-	command = str('babel "'+babel_i+'" -osdf "'+babel_o+'"') #Create command
+	babel_i = directory + '*.log'
+	babel_o = directory + '*.sdf'
 
-	try:
-		convert_babel = subprocess.check_output(command, shell=True) #pass to cmd prompt
-	except subprocess.CalledProcessError:
-		os.system(command)
-		print('Encountered error opening babel with subprocess.')
+	for glog_file in logs:
+		sdf_file = glog_file[:-4] + ".sdf"
+
+		if not sdf_file in os.listdir(directory):
+			Path(os.path.join(directory, sdf_file)).touch()
+	
+	cwd = os.getcwd()
+	os.chdir(directory)
+
+	for ifile in os.listdir(directory):
+		if ifile.endswith('.log'):
+			subprocess.run(["obabel", ifile, "-osdf", "-O", ifile[:-4] + ".sdf"])
+
+	os.chdir(cwd)
 
 	[os.remove(babel_o[:-5]+x) for x in os.listdir(babel_o[:-5]) if x.lower().endswith('.log')]
 	
