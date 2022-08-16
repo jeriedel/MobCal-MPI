@@ -54,6 +54,7 @@ def xyz_to_mfj(directory,xyz,key,mfj,charge,parameters):
 	spacing = '%s\n%s\n%s\n%s\n%s\n%s\n%s %s %s %s %s %s\n' #regex for header
 	#We want to write the filename, 1, number of atoms, ang, calc, and 1 to the header
 	opf.write(spacing%(filename,'1',str(atom_num),'ang',charge,'1.0000',parameters[0],parameters[1],parameters[2],parameters[3],seed,parameters[4]))
+
 	for i in range(atom_num):
 		spacing = '%10s	   %10s	   %10s	   %7s	  %10s	  %5s	 %5s	%5s	   %5s\n' #regex for line
 		try: #Get the mass for the atom
@@ -78,6 +79,7 @@ def xyz_to_mfj(directory,xyz,key,mfj,charge,parameters):
 		try: #Get the van der Waals forces for the atom
 			vwd_w = [vdw_info[atom_info[xyz_data[i][5]]][0],vdw_info[atom_info[xyz_data[i][5]]][1],vdw_info[atom_info[xyz_data[i][5]]][2],vdw_info[atom_info[xyz_data[i][5]]][3]]
 		except (NameError,KeyError): #If the atom type cannot be determined in the vdw file throw error
+			print("I am the error")
 			vwd_w = ['','','','']
 		#We want to write the relevant atom data to the file being: x, y, z, atom mass, key data, vdw force 1, vdw force 2, vdw force 3, vdw force 4
 		opf.write(spacing%(xyz_data[i][2],xyz_data[i][3],xyz_data[i][4],atom_mass,key_data[i][2],vwd_w[0],vwd_w[1],vwd_w[2],vwd_w[3]))

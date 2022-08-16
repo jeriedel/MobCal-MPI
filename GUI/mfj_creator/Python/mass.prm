@@ -1,3 +1,4 @@
+atom          0    92   LI+   "LITHIUMCATION"              3     6.941    0
 atom          1    1    CR    "ALKYLCARBONSP3"             6    12.000    4
 atom          2    2    C=C   "VINYLICCARBONSP2"           6    12.000    3
 atom          3    2    CSP2  "GENERICSP2CARBON"           6    12.000    3
